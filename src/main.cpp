@@ -2,6 +2,9 @@
   ESP32 C3 DS18B20 BTHome Sensor
   (c) 2025 Rysiek Labus - https://sq9mdd.qrz.pl
 */
+#include <WiFi.h>
+#include "esp_wifi.h"
+#include "esp_bt.h"
 #include "NimBLEDevice.h"           // biblioteka NimBLE-Arduino  
 #include <BtHomeV2Device.h>         // biblioteka BtHomeV2Device
 #include "esp_sleep.h"              // biblioteka do obsługi trybów uśpienia ESP32
@@ -19,8 +22,8 @@
 #define DS18B20_PIN 20              // wybierz pin do którego masz podłączony DS18B20
 
 // kalibrowac dla napiec 4,2 i 3,3 V program do przeliczania parametrow: tools/calibration-voltage-divider.py
-static constexpr float CAL_K   = 0.81081081f;   // współczynnik kalibracji default 01.00f
-static constexpr float CAL_BmV = 389.19f;       // offset kalibracji w mV 0.0f
+static constexpr float CAL_K   = 0.86206897f;   // współczynnik kalibracji default 01.00f
+static constexpr float CAL_BmV = 286.21f;       // offset kalibracji w mV 0.0f
 
 RTC_DATA_ATTR static uint32_t bootcount;  // persists bootcount across deep sleep cycles using RTC memory
 float dsTempC = 0.0f;                     // zmienna do przechowywania temperatury z DS18B20  
@@ -47,7 +50,7 @@ static uint16_t read_vbat_mV() {
   for (int i=0;i<N;++i) acc += analogReadMilliVolts(VBAT_ADC_PIN);
   uint16_t u_adc_mV = acc / N;
 #else                                                             // Arduino-ESP32 < v3.0.0
-  const int N = 32;                                               // liczba próbek do uśrednienia   
+  const int N = 64;                                               // liczba próbek do uśrednienia   
   uint32_t acc = 0;                                               // akumulator sumy próbek       
   for (int i=0;i<N;++i) acc += analogRead(VBAT_ADC_PIN);          // odczyt ADC i sumowanie 
   uint16_t raw = acc / N;                                         // średnia z N próbek
@@ -116,12 +119,15 @@ void sendBeacon(uint8_t advertisementData[], size_t size, uint8_t repeats){     
 
 void setup() {
   /*
-    Kolejność inicjalizacji ma znaczenie!
     Prawidłowa kolejność zapewnia zmniejszenie poboru energii.
   */
   //setCpuFrequencyMhz(80);
-  pinMode(LED_PIN, OUTPUT);                                                 // ustaw pin LED jako wyjście     
-  digitalWrite(LED_PIN, LOW);                                               // LED on
+  WiFi.persistent(false);                                                   // żadnych auto-zapisów
+  WiFi.mode(WIFI_OFF);                                                      // wyłącz Wi-Fi
+  esp_wifi_stop();                                                          // zatrzymaj sterownik Wi-Fi
+  esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);                    // nie używamy klasycznego BT
+  // ----- odczyt temperatury z DS18B20 -----
+
   bootcount++;                                                              // increment bootcount
   pinMode(DS_POWER_PIN, OUTPUT);                                            // pin do zasilania DS18B20
   digitalWrite(DS_POWER_PIN, HIGH);                                         // włącz zasilanie DS18B20
@@ -131,9 +137,12 @@ void setup() {
   dsTempC = sensors.getTempCByIndex(0);                                     // pierwszy czujnik na magistrali
   digitalWrite(DS_POWER_PIN, LOW);                                          // odetnij zasilanie DS-a
   pinMode(DS_POWER_PIN, INPUT);                                             // Hi-Z, dodatkowe zabezpieczenie
-  digitalWrite(LED_PIN, HIGH);                                              // LED off
-// ----- odczyt VBAT i przygotowanie danych do wysłania -----
+  pinMode(LED_PIN, OUTPUT);                                                 // ustaw pin LED jako wyjście     
+  digitalWrite(LED_PIN, LOW);                                               // LED on
+// ----- odczyt VBAT -----
   uint16_t vbat_mV = read_vbat_mV_calibrated();                             // odczyt VBAT w mV
+  digitalWrite(LED_PIN, HIGH);                                              // LED off
+// ----- przygotowanie i wysłanie reklam BTHome -----
   uint8_t advertisementData[MAX_ADVERTISEMENT_SIZE];                        // bufor na dane reklamowe
   uint8_t size = 0;                                                         // rozmiar danych reklamowych
   BtHomeV2Device device("BT3", "BT3", false);                               // utwórz obiekt urządzenia BTHome
