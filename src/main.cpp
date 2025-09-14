@@ -21,7 +21,18 @@
 #define DS_POWER_PIN 10             // GPI10 (zasilanie DS18B20)
 #define DS18B20_PIN 20              // wybierz pin do którego masz podłączony DS18B20
 
-// kalibrowac dla napiec 4,2 i 3,3 V program do przeliczania parametrow: tools/calibration-voltage-divider.py
+// Procedura kalibracji pomiaru napięcia VBAT
+// wymaga zasilacza laboratoryjnego i miernika cyfrowego:
+// ustaw CAL_K = 1.0 i CAL_BmV = 0.0
+// podlacz urzadzenie do zasilacza laboratoryjnego i ustaw napiecie np. 4.20V
+// zanotuj przesyłane napiecie (np. v1 = 4.05V)
+// zmień napiecie na 3.30V
+// zanotuj przesyłane napiecie (np. v2 = 3.15V)
+// uruchom program python tools/calibration-voltage-divider.py z podanymi wartościami
+// program wyliczy i poda wartości CAL_K i CAL_BmV
+// wprowadź te wartości do poniższych stałych i wgraj program do ESP32
+// sprawdź czy teraz przesyłane wartości są prawidłowe
+// jeśli nie, powtórz procedurę
 static constexpr float CAL_K   = 0.86206897f;   // współczynnik kalibracji default 01.00f
 static constexpr float CAL_BmV = 286.21f;       // offset kalibracji w mV 0.0f
 
@@ -134,7 +145,6 @@ void setup() {
   esp_wifi_stop();                                                          // zatrzymaj sterownik Wi-Fi
   esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);                    // nie używamy klasycznego BT
   // ----- odczyt temperatury z DS18B20 -----
-
   bootcount++;                                                              // increment bootcount
   pinMode(DS_POWER_PIN, OUTPUT);                                            // pin do zasilania DS18B20
   digitalWrite(DS_POWER_PIN, HIGH);                                         // włącz zasilanie DS18B20
