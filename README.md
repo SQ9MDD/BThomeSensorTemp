@@ -9,7 +9,7 @@ Minimalistyczny firmware dla ESP32-C3, który:
 - wysyła dane w formacie **BTHome v2** przez BLE (broadcast),
 - wchodzi w tryb głębokiego uśpienia (deep sleep) na określony czas.
 
-✅ Średni pobór prądu: **ok. 240 µA** (zależnie od długości reklamy BLE i czasu aktywności).
+✅ Średni pobór prądu: **ok. 160 µA** (zależnie od długości reklamy BLE i czasu aktywności i po wymiania LDO).
 
 Zaprojektowany z myślą o niskim poborze mocy – idealny do zasilania bateryjnego.
 
@@ -22,7 +22,7 @@ Minimalistic firmware for ESP32-C3 that:
 - broadcasts data using **BTHome v2** format over BLE,
 - enters deep sleep mode for a defined period.
 
-✅ Average current consumption: **~240 µA** (depends on BLE advertising and active time).
+✅ Average current consumption: **~160 µA** (depends on BLE advertising and active time, after LDO change).
 
 Designed for low power consumption – perfect for battery-powered applications.
 
@@ -30,7 +30,7 @@ Designed for low power consumption – perfect for battery-powered applications.
 
 ## Wymagania / Requirements
 
-- ESP32-C3 (e.g. DevKitM-1)
+- ESP32-C3 Mini (e.g. DevKitM-1)
 - DS18B20 sensor
 - Voltage divider on VBAT
 - Arduino IDE or PlatformIO
