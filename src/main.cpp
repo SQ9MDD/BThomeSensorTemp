@@ -71,6 +71,13 @@ uint16_t read_vbat_mV_calibrated() {              // skalibrowany pomiar VBAT w 
   return (uint16_t)v;                             // zwróć skalibrowane mV      
 }
 
+/*
+  estimate_battery_percent:
+  Estimates the state of charge (SoC) of a single-cell Li-Ion/Li-Po battery based on its open-circuit voltage (OCV).
+  Uses a lookup table (lut) mapping voltage values [V] to percentage [%] for typical Li-Ion/Li-Po cells.
+  For voltages between table entries, linear interpolation is performed to provide a smooth percentage estimate.
+  Assumes the voltage is measured without significant load (OCV).
+*/
 uint8_t estimate_battery_percent(float vbat) {          // oszacowanie poziomu naładowania baterii Li-Ion/Li-Po na podstawie napięcia
   // OCV tabela przybliżona (bez obciążenia); 
   // dopasuj pod swoją celę
