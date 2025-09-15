@@ -2,9 +2,9 @@
   ESP32 C3 DS18B20 BTHome Sensor
   (c) 2025 Rysiek Labus - https://sq9mdd.qrz.pl
 */
-#include <WiFi.h>
-#include "esp_wifi.h"
-#include "esp_bt.h"
+#include <WiFi.h>                   // biblioteka do obsługi Wi-Fi w ESP32
+#include "esp_wifi.h"               // biblioteka do obsługi Wi-Fi w ESP32
+#include "esp_bt.h"                 // biblioteka do obsługi Bluetooth w ESP32
 #include "NimBLEDevice.h"           // biblioteka NimBLE-Arduino  
 #include <BtHomeV2Device.h>         // biblioteka BtHomeV2Device
 #include "esp_sleep.h"              // biblioteka do obsługi trybów uśpienia ESP32
