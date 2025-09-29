@@ -33,8 +33,8 @@
 // wprowadź te wartości do poniższych stałych i wgraj program do ESP32
 // sprawdź czy teraz przesyłane wartości są prawidłowe
 // jeśli nie, powtórz procedurę
-static constexpr float CAL_K   = 0.87719298f;   // współczynnik kalibracji default 01.00f
-static constexpr float CAL_BmV = 208.77f;       // offset kalibracji w mV 0.0f
+static constexpr float CAL_K   = 1.0f;   // współczynnik kalibracji default 01.00f
+static constexpr float CAL_BmV = 0.0f;       // offset kalibracji w mV 0.0f
 
 RTC_DATA_ATTR static uint32_t bootcount;  // persists bootcount across deep sleep cycles using RTC memory
 float dsTempC = 0.0f;                     // zmienna do przechowywania temperatury z DS18B20  
