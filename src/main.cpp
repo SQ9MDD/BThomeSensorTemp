@@ -16,7 +16,7 @@
 #define VBAT_GATE_PIN  1            // GPIO1 (wirtualna masa)
 #define R1 220000.0f                // rezystor R1 dzielnika do VBAT
 #define R2 100000.0f                // rezystor R2 dzielnika do "masy" (GPIO1)
-#define GPIO_DEEP_SLEEP_DURATION 60 // sleep x seconds and then wake up
+#define GPIO_DEEP_SLEEP_DURATION 5 // sleep x seconds and then wake up
 #define TX_DBM 3                    // transmit power in dBm (ESP32-C3: -12, -9, -6, -3, 0, 3, 6, 9 dBm)
 #define DS_POWER_PIN 10             // GPI10 (zasilanie DS18B20)
 #define DS18B20_PIN 20              // wybierz pin do którego masz podłączony DS18B20
